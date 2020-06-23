@@ -1,0 +1,8 @@
+version: '2.4'
+
+services:
+  transmogrifier:
+    environment:
+      - MQTT_ENDPOINT=tls://mosquitto:8883
+      - NUT_USERNAME=admin
+      - NUT_PASSWORD=hunter2

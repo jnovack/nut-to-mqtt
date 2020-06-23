@@ -1,0 +1,13 @@
+version: '2.4'
+
+services:
+  transmogrifier:
+    image: nut-to-mqtt
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APPLICATION: "nut-to-mutt"
+        BUILD_RFC3339: "1970-01-01T00:00:00Z"
+        COMMIT: "local"
+        VERSION: "dirty"

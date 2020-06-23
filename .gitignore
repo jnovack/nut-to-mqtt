@@ -2,3 +2,4 @@
 **/.vscode
 **/bin
 **/docker-compose.override.yml
+**/qemu**
