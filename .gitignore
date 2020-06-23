@@ -1,0 +1,4 @@
+**/.env
+**/.vscode
+**/bin
+**/docker-compose.override.yml

@@ -1,0 +1,6 @@
+**/.env
+**/.git
+**/.vscode
+**/bin
+**/docker-compose*
+**/Dockerfile*
