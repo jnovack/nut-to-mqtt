@@ -62,6 +62,4 @@ LABEL org.opencontainers.image.ref.name="jnovack/${APPLICATION}" \
 
 COPY --from=build /go/bin/${APPLICATION} /app
 
-EXPOSE 9344
-
 ENTRYPOINT ["/app"]
