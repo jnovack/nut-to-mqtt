@@ -64,22 +64,23 @@ func Connect() {
 
 	client, err = nut.Connect(*hostname)
 	if err != nil {
-		log.Fatal().Err(err).Str("hostname", *hostname).Msg("Cannot connect to nut_hostname")
+		log.Fatal().Err(err).Str("hostname", *hostname).Msg("Cannot connect to NUT host")
 	}
 	log.Info().Msgf("Connected to %s", *hostname)
 
 	_, err = client.Authenticate(*username, *password)
 	if err != nil {
-		fmt.Print(err)
+		log.Fatal().Err(err).Str("username", *username).Msg("unable to Authenticate()")
 	}
 }
 
 // Collect variables from connection
 func Collect(variables map[string]string) []Metric {
+	log.Debug().Caller().Msg("Collect()")
 	trackedVariables = variables
-	upsList, listErr := client.GetUPSList()
-	if listErr != nil {
-		fmt.Println(listErr)
+	upsList, err := client.GetUPSList()
+	if err != nil {
+		log.Fatal().Err(err).Str("hostname", *hostname).Msg("unable to GetUPSList()")
 	}
 
 	var metrics []Metric
@@ -88,7 +89,7 @@ func Collect(variables map[string]string) []Metric {
 	for num := range upsList {
 		upsVariables, err := upsList[0].GetVariables()
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal().Err(err).Str("hostname", *hostname).Msg("unable to GetVariables()")
 		}
 		for _, obj := range upsVariables {
 			if _, ok = trackedVariables[obj.Name]; ok {
