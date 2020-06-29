@@ -9,5 +9,6 @@ require (
 	github.com/namsral/flag v1.7.4-pre
 	github.com/robbiet480/go.nut v0.0.0-20180430014622-246697bfaea7
 	github.com/rs/zerolog v1.19.0
+	golang.org/x/net v0.0.0-20200625001655-4c5254603344 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 )
