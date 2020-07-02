@@ -3,10 +3,12 @@ package mqttpub
 import (
 	"crypto/tls"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	secrets "github.com/ijustfool/docker-secrets"
 	goVersion "github.com/jnovack/go-version"
 	"github.com/namsral/flag"
 	"github.com/rs/zerolog/log"
@@ -16,12 +18,13 @@ var (
 	// Client is an interface to the MQTT client
 	Client mqtt.Client
 	// Flag variables
-	endpoint = flag.String("mqtt_endpoint", "tcp://mosquitto:1883", "mosquitto message broker endpoint")
-	clientid = flag.String("mqtt_clientid", "random", "mqtt client id")
-	username = flag.String("mqtt_username", "", "username for mqtt authentication")
-	password = flag.String("mqtt_password", "", "password for mqtt authentication")
-	certFile = flag.String("mqtt_certfile", "", "certificate (in pem format) for mqtt authentication")
-	keyFile  = flag.String("mqtt_keyfile", "", "private key (in pem format) for mqtt authentication")
+	endpoint     = flag.String("mqtt_endpoint", "tcp://mosquitto:1883", "mosquitto message broker endpoint")
+	clientid     = flag.String("mqtt_clientid", "random", "mqtt client id")
+	username     = flag.String("mqtt_username", "", "username for mqtt authentication")
+	password     = flag.String("mqtt_password", "", "password for mqtt authentication")
+	passwordFile = flag.String("mqtt_password_file", "", "path to the 'mqtt_password' file, which holds the mqtt_password")
+	certFile     = flag.String("mqtt_certfile", "", "certificate (in pem format) for mqtt authentication")
+	keyFile      = flag.String("mqtt_keyfile", "", "private key (in pem format) for mqtt authentication")
 )
 
 func init() {
@@ -35,6 +38,12 @@ func Noop() mqtt.Client {
 
 // Connect does nothing apparently
 func Connect() mqtt.Client {
+	if *passwordFile != "" {
+		dockerSecrets, _ := secrets.NewDockerSecrets(filepath.Dir(*passwordFile))
+		secret, _ := dockerSecrets.Get("mqtt_password")
+		*password = secret
+	}
+
 	opts := mqtt.NewClientOptions()
 	opts.SetCleanSession(true)
 	opts.AddBroker(*endpoint)
@@ -51,6 +60,8 @@ func Connect() mqtt.Client {
 		opts.SetUsername(*username)
 		if *password != "" {
 			opts.SetPassword(*password)
+		} else {
+			log.Fatal().Msg("MQTT requires a password when you supply a username")
 		}
 	}
 

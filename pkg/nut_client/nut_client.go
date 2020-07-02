@@ -2,7 +2,9 @@ package nutclient
 
 import (
 	"fmt"
+	"path/filepath"
 
+	secrets "github.com/ijustfool/docker-secrets"
 	"github.com/namsral/flag"
 	nut "github.com/robbiet480/go.nut"
 	"github.com/rs/zerolog/log"
@@ -37,10 +39,11 @@ var (
 )
 
 var (
-	client   nut.Client
-	hostname = flag.String("nut_hostname", "127.0.0.1", "nut hostname where nut-server is running on port 3493")
-	username = flag.String("nut_username", "", "username for nut authentication (required)")
-	password = flag.String("nut_password", "", "password for nut authentication (required)")
+	client       nut.Client
+	hostname     = flag.String("nut_hostname", "127.0.0.1", "nut hostname where nut-server is running on port 3493")
+	username     = flag.String("nut_username", "", "username for nut authentication (required)")
+	password     = flag.String("nut_password", "", "password for nut authentication (required)")
+	passwordFile = flag.String("nut_password_file", "", "path to the 'nut_password' file, which holds the nut_password")
 )
 
 func init() {
@@ -49,6 +52,12 @@ func init() {
 
 // Initialize hack until I can re-write the NUT library
 func Initialize() {
+	if *passwordFile != "" {
+		dockerSecrets, _ := secrets.NewDockerSecrets(filepath.Dir(*passwordFile))
+		secret, _ := dockerSecrets.Get("nut_password")
+		*password = secret
+	}
+
 	if *username == "" {
 		log.Fatal().Msgf("nut_username must be supplied to connect to nut_hostname")
 	}

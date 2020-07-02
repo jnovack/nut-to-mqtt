@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.2.0
+	github.com/ijustfool/docker-secrets v0.0.0-20191021062307-b25ea5007562
 	github.com/jnovack/go-version v1.0.0
 	github.com/mattn/go-isatty v0.0.12
 	github.com/namsral/flag v1.7.4-pre
