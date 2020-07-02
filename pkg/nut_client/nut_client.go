@@ -93,22 +93,22 @@ func Collect(variables map[string]string) []Metric {
 		}
 		for _, obj := range upsVariables {
 			if _, ok = trackedVariables[obj.Name]; ok {
-				metric.Topic = fmt.Sprintf("v1/ups/%s/%s", upsList[num].Name, obj.Name)
+				metric.Topic = fmt.Sprintf("%s/%s", upsList[num].Name, obj.Name)
 
 				// Hardcoded transforms
 				switch name := obj.Name; name {
 				case "ups.status":
 					metric.Message = upsStatus[obj.Value.(string)]
 					metrics = append(metrics, metric)
-					log.Debug().Msgf("v1/ups/%s/%s = %s", upsList[num].Name, obj.Name, metric.Message)
+					log.Debug().Msgf("%s/%s = %s", upsList[num].Name, obj.Name, metric.Message)
 				case "battery.runtime":
 					metric.Message = formatValue(obj.Value.(int64) / 60)
 					metrics = append(metrics, metric)
-					log.Debug().Msgf("v1/ups/%s/%s = %s", upsList[num].Name, obj.Name, metric.Message)
+					log.Debug().Msgf("%s/%s = %s", upsList[num].Name, obj.Name, metric.Message)
 				default:
 					metric.Message = formatValue(obj.Value)
 					metrics = append(metrics, metric)
-					log.Debug().Msgf("v1/ups/%s/%s = %s", upsList[num].Name, obj.Name, metric.Message)
+					log.Debug().Msgf("%s/%s = %s", upsList[num].Name, obj.Name, metric.Message)
 				}
 			}
 		}

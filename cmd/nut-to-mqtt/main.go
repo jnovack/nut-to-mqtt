@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -35,7 +36,9 @@ func main() {
 		if mqttClient.IsConnected() {
 			metrics := nutClient.Collect(trackedMetrics)
 			for _, obj := range metrics {
-				// log.Debug().Str("topic", obj.Topic).Str("msg", obj.Message).Msg("Found metric")
+				// Add Topic Prefix
+				obj.Topic = fmt.Sprintf("%s%s", "v1/ups/", obj.Topic)
+				log.Debug().Str("topic", obj.Topic).Str("msg", obj.Message).Msg("Found metric")
 				token := mqttClient.Publish(obj.Topic, 0, false, obj.Message)
 				if !token.WaitTimeout(10 * time.Second) {
 					log.Error().Str("topic", obj.Topic).Str("msg", obj.Message).Msg("Error: Timeout sending message")
