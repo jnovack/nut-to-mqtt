@@ -37,6 +37,7 @@ func main() {
 			metrics := nutClient.Collect(trackedMetrics)
 			for _, obj := range metrics {
 				// Add Topic Prefix
+				// TODO Permit run-time setting of topic prefix
 				obj.Topic = fmt.Sprintf("%s%s", "v1/ups/", obj.Topic)
 				log.Debug().Str("topic", obj.Topic).Str("msg", obj.Message).Msg("Found metric")
 				token := mqttClient.Publish(obj.Topic, 0, false, obj.Message)
@@ -47,6 +48,7 @@ func main() {
 					log.Error().Str("topic", obj.Topic).Str("msg", obj.Message).Msgf("Failed to send message")
 				}
 			}
+			// TODO Permit run-time setting of loop delay
 			time.Sleep(12 * time.Second)
 		}
 		time.Sleep(3 * time.Second)
@@ -65,6 +67,8 @@ func init() {
 		// Format using JSON if running as a service (or container)
 		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	}
+
+	// TODO Permit run-time setting of LogLevel
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	flag.Parse()
